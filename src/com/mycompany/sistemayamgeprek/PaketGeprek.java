@@ -1,10 +1,14 @@
+
 package com.mycompany.sistemayamgeprek;
 
-public class PaketGeprek extends AyamGeprek {
+public class PaketGeprek extends AyamGeprek
+        implements BisaDipesan {
 
     private String isiPaket;
 
-    public PaketGeprek(String nama, double harga, String isiPaket) {
+    public PaketGeprek(
+            String nama, double harga, String isiPaket) {
+
         super(nama, harga);
         setIsiPaket(isiPaket);
     }
@@ -34,7 +38,21 @@ public class PaketGeprek extends AyamGeprek {
     @Override
     public void caraPesan() {
         System.out.println(
-                "-> Paket geprek berisi ayam, nasi, dan tambahan sesuai paket."
+                "Paket geprek berisi ayam, nasi, dan tambahan sesuai paket."
+        );
+    }
+
+    @Override
+    public void deskripsiKhusus() {
+        System.out.println(
+                "Jenis: paket ayam geprek dengan beberapa menu pelengkap."
+        );
+    }
+
+    @Override
+    public void prosesPemesanan() {
+        System.out.println(
+                "Paket geprek sedang disiapkan lengkap dengan isi paket."
         );
     }
 }
