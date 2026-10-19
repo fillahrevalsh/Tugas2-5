@@ -1,6 +1,7 @@
+
 package com.mycompany.sistemayamgeprek;
 
-public class AyamGeprek {
+public abstract class AyamGeprek {
 
     private String nama;
     private double harga;
@@ -8,7 +9,7 @@ public class AyamGeprek {
     public static int totalPesananBerhasilDibuat = 0;
 
     public AyamGeprek(String nama, double harga) {
-        this.nama = nama;
+        setNama(nama);
         setHarga(harga);
 
         totalPesananBerhasilDibuat++;
@@ -48,7 +49,10 @@ public class AyamGeprek {
 
     public void caraPesan() {
         System.out.println(
-                "-> Pesanan dapat dipesan langsung di kasir."
+                "Pesanan dapat dipesan langsung di kasir."
         );
     }
+
+    // Abstract method
+    public abstract void deskripsiKhusus();
 }
