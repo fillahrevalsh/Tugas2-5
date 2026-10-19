@@ -1,10 +1,14 @@
+
 package com.mycompany.sistemayamgeprek;
 
-public class GeprekBiasa extends AyamGeprek {
+public class GeprekBiasa extends AyamGeprek
+        implements BisaDipesan {
 
     private int levelPedas;
 
-    public GeprekBiasa(String nama, double harga, int levelPedas) {
+    public GeprekBiasa(
+            String nama, double harga, int levelPedas) {
+
         super(nama, harga);
         setLevelPedas(levelPedas);
     }
@@ -17,7 +21,9 @@ public class GeprekBiasa extends AyamGeprek {
         if (levelPedas >= 1 && levelPedas <= 5) {
             this.levelPedas = levelPedas;
         } else {
-            System.out.println("Level pedas harus antara 1 sampai 5!");
+            System.out.println(
+                    "Level pedas harus antara 1 sampai 5!"
+            );
         }
     }
 
@@ -34,7 +40,21 @@ public class GeprekBiasa extends AyamGeprek {
     @Override
     public void caraPesan() {
         System.out.println(
-                "-> Geprek biasa dipesan dengan memilih level pedas 1-5."
+                "Geprek biasa dipesan dengan memilih level pedas 1-5."
+        );
+    }
+
+    @Override
+    public void deskripsiKhusus() {
+        System.out.println(
+                "Jenis: ayam geprek biasa dengan pilihan level pedas."
+        );
+    }
+
+    @Override
+    public void prosesPemesanan() {
+        System.out.println(
+                "Geprek biasa sedang disiapkan sesuai level pedas."
         );
     }
 }
