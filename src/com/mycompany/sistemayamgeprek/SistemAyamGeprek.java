@@ -1,19 +1,22 @@
+
 package com.mycompany.sistemayamgeprek;
+
 import java.util.Scanner;
+
 public class SistemAyamGeprek {
 
-    // Compile-Time Polymorphism / Method Overloading
+    // Compile-Time Polymorphism: mencari berdasarkan nama
     public static void cariPesanan(
             String nama,
             AyamGeprek[] daftarPesanan,
             int jumlahPesanan) {
 
-        System.out.println("Mencari pesanan dengan Nama: " + nama);
-
         boolean ditemukan = false;
 
         for (int i = 0; i < jumlahPesanan; i++) {
-            if (daftarPesanan[i].getNama().equalsIgnoreCase(nama)) {
+            if (daftarPesanan[i].getNama()
+                    .equalsIgnoreCase(nama)) {
+
                 daftarPesanan[i].tampilkanInfo();
                 ditemukan = true;
             }
@@ -24,13 +27,11 @@ public class SistemAyamGeprek {
         }
     }
 
-    // Compile-Time Polymorphism / Method Overloading
+    // Compile-Time Polymorphism: mencari berdasarkan harga
     public static void cariPesanan(
             double harga,
             AyamGeprek[] daftarPesanan,
             int jumlahPesanan) {
-
-        System.out.println("Mencari pesanan dengan Harga: Rp" + harga);
 
         boolean ditemukan = false;
 
@@ -46,86 +47,71 @@ public class SistemAyamGeprek {
         }
     }
 
-    // Runtime Polymorphism dan Dynamic Binding
-    // Parameter menggunakan tipe Superclass
+    // Parameter bertipe abstract superclass
     public static void prosesPesanan(AyamGeprek pesanan) {
 
-        System.out.println("\n--- Simulasi Proses Pesanan ---");
+        System.out.println("\n--- Proses Pesanan ---");
 
-        pesanan.tampilkanInfo();
-        pesanan.caraPesan();
+        // Abstract method yang sudah di-override subclass
+        pesanan.deskripsiKhusus();
 
-        System.out.println("Pesanan sedang diproses...");
-        System.out.println("Pesanan berhasil diproses!");
+        // Pengecekan interface sebelum pemanggilan method
+        if (pesanan instanceof BisaDipesan) {
+            BisaDipesan dataPesanan = (BisaDipesan) pesanan;
+            dataPesanan.prosesPemesanan();
+        }
+
+        if (pesanan instanceof BisaDiberiTopping) {
+            BisaDiberiTopping dataTopping =
+                    (BisaDiberiTopping) pesanan;
+
+            dataTopping.tambahTopping();
+        }
+
+        System.out.println("Simulasi selesai.");
     }
 
     public static void main(String[] args) {
 
         try (Scanner scanner = new Scanner(System.in)) {
 
-            // Reference Management:
-            // Array bertipe Superclass
+            // Array bertipe superclass abstract
             AyamGeprek[] daftarPesanan = new AyamGeprek[10];
 
             int jumlahPesanan = 0;
             boolean isRunning = true;
 
-            // Data awal agar langsung memiliki 3-5 objek
-            // dari seluruh variasi subclass
+            // Lima data awal mencakup semua subclass
+            daftarPesanan[jumlahPesanan++] =
+                    new GeprekBiasa("Geprek Original", 15000, 2);
 
-            daftarPesanan[jumlahPesanan] =
-                    new GeprekBiasa(
-                            "Geprek Original",
-                            15000,
-                            2
-                    );
-            jumlahPesanan++;
-
-            daftarPesanan[jumlahPesanan] =
+            daftarPesanan[jumlahPesanan++] =
                     new PaketGeprek(
-                            "Paket Hemat",
-                            20000,
-                            "Ayam + Nasi + Es Teh"
-                    );
-            jumlahPesanan++;
+                            "Paket Hemat", 20000,
+                            "Ayam + Nasi + Es Teh");
 
-            daftarPesanan[jumlahPesanan] =
+            daftarPesanan[jumlahPesanan++] =
                     new GeprekKeju(
-                            "Geprek Mozarella",
-                            22000,
-                            "Mozarella"
-                    );
-            jumlahPesanan++;
+                            "Geprek Mozarella", 22000, "Mozarella");
 
-            daftarPesanan[jumlahPesanan] =
-                    new GeprekBiasa(
-                            "Geprek Pedas",
-                            17000,
-                            5
-                    );
-            jumlahPesanan++;
+            daftarPesanan[jumlahPesanan++] =
+                    new GeprekBiasa("Geprek Pedas", 17000, 5);
 
-            daftarPesanan[jumlahPesanan] =
+            daftarPesanan[jumlahPesanan++] =
                     new GeprekKeju(
-                            "Geprek Cheddar",
-                            21000,
-                            "Cheddar"
-                    );
-            jumlahPesanan++;
-
-            System.out.println("========================================");
-            System.out.println("     SELAMAT DATANG DI AYAM GEPREK!");
-            System.out.println("========================================");
+                            "Geprek Cheddar", 21000, "Cheddar");
 
             while (isRunning) {
 
-                System.out.println("\nMenu Utama:");
+                System.out.println("\n========================================");
+                System.out.println("       SISTEM PENJUALAN AYAM GEPREK");
+                System.out.println("========================================");
                 System.out.println("1. Tambah Pesanan");
                 System.out.println("2. Lihat Daftar Pesanan");
-                System.out.println("3. Cari Pesanan (Fitur Overloading)");
-                System.out.println("4. Simulasi Proses Pesanan");
+                System.out.println("3. Cari Pesanan");
+                System.out.println("4. Simulasi Abstract dan Interface");
                 System.out.println("5. Keluar");
-                System.out.print("Pilih Menu: 1-5: ");
+                System.out.print("Pilih menu: ");
 
                 int pilihan = scanner.nextInt();
                 scanner.nextLine();
@@ -133,289 +119,151 @@ public class SistemAyamGeprek {
                 switch (pilihan) {
 
                     case 1 -> {
-
                         if (jumlahPesanan < daftarPesanan.length) {
 
-                            System.out.println("\n-- Pilih Jenis Pesanan --");
-                            System.out.println("1. Ayam Geprek Biasa");
+                            System.out.println("1. Geprek Biasa");
                             System.out.println("2. Paket Geprek");
                             System.out.println("3. Geprek Keju");
-                            System.out.print("Pilihan (1/2/3): ");
+                            System.out.print("Pilih jenis: ");
 
                             int jenis = scanner.nextInt();
                             scanner.nextLine();
 
-                            System.out.print("Masukkan Nama Pesanan: ");
-                            String namaBaru = scanner.nextLine();
+                            System.out.print("Nama pesanan: ");
+                            String nama = scanner.nextLine();
 
-                            System.out.print("Masukkan Harga: ");
-                            double hargaBaru = scanner.nextDouble();
+                            System.out.print("Harga: ");
+                            double harga = scanner.nextDouble();
                             scanner.nextLine();
 
                             if (jenis == 1) {
 
-                                System.out.print(
-                                        "Masukkan Level Pedas (1-5): "
-                                );
-
+                                System.out.print("Level pedas (1-5): ");
                                 int level = scanner.nextInt();
                                 scanner.nextLine();
 
-                                // Upcasting
                                 daftarPesanan[jumlahPesanan] =
                                         new GeprekBiasa(
-                                                namaBaru,
-                                                hargaBaru,
-                                                level
-                                        );
+                                                nama, harga, level);
 
                                 jumlahPesanan++;
-
-                                System.out.println(
-                                        "Sukses! Ayam geprek berhasil ditambahkan."
-                                );
 
                             } else if (jenis == 2) {
 
-                                System.out.print("Masukkan Isi Paket: ");
-                                String isiPaket = scanner.nextLine();
+                                System.out.print("Isi paket: ");
+                                String isi = scanner.nextLine();
 
-                                // Upcasting
                                 daftarPesanan[jumlahPesanan] =
                                         new PaketGeprek(
-                                                namaBaru,
-                                                hargaBaru,
-                                                isiPaket
-                                        );
+                                                nama, harga, isi);
 
                                 jumlahPesanan++;
-
-                                System.out.println(
-                                        "Sukses! Paket geprek berhasil ditambahkan."
-                                );
 
                             } else if (jenis == 3) {
 
-                                System.out.print("Masukkan Jenis Keju: ");
-                                String jenisKeju = scanner.nextLine();
+                                System.out.print("Jenis keju: ");
+                                String keju = scanner.nextLine();
 
-                                // Upcasting
                                 daftarPesanan[jumlahPesanan] =
                                         new GeprekKeju(
-                                                namaBaru,
-                                                hargaBaru,
-                                                jenisKeju
-                                        );
+                                                nama, harga, keju);
 
                                 jumlahPesanan++;
 
-                                System.out.println(
-                                        "Sukses! Geprek keju berhasil ditambahkan."
-                                );
-
                             } else {
-
                                 System.out.println(
-                                        "Jenis pesanan tidak valid."
-                                );
+                                        "Jenis pesanan tidak valid.");
                             }
 
                         } else {
-
-                            System.out.println(
-                                    "Maaf, kapasitas pesanan penuh!"
-                            );
+                            System.out.println("Kapasitas pesanan penuh!");
                         }
-
-                        System.out.print(
-                                "Tekan Enter untuk melanjutkan..."
-                        );
-                        scanner.nextLine();
                     }
 
                     case 2 -> {
+                        System.out.println("\n--- Daftar Pesanan ---");
 
-                        System.out.println(
-                                "\n--- Daftar Pesanan Ayam Geprek ---"
-                        );
+                        for (int i = 0; i < jumlahPesanan; i++) {
+                            System.out.print((i + 1) + ". ");
 
-                        if (jumlahPesanan == 0) {
+                            // Runtime polymorphism / dynamic binding
+                            daftarPesanan[i].tampilkanInfo();
 
-                            System.out.println(
-                                    "Belum ada pesanan yang tersimpan."
-                            );
-
-                        } else {
-
-                            for (int i = 0; i < jumlahPesanan; i++) {
-
-                                System.out.print((i + 1) + ". ");
-
-                                // Runtime Polymorphism
-                                // Dynamic Binding terjadi di sini
-                                daftarPesanan[i].tampilkanInfo();
-
-                                daftarPesanan[i].caraPesan();
-
-                                System.out.println();
-                            }
-
-                            System.out.println(
-                                    "* Total Pesanan: "
-                                    + AyamGeprek.totalPesananBerhasilDibuat
-                            );
+                            // Abstract method: perilaku subclass
+                            daftarPesanan[i].deskripsiKhusus();
+                            System.out.println();
                         }
 
-                        System.out.print(
-                                "Tekan Enter untuk melanjutkan..."
-                        );
-                        scanner.nextLine();
+                        System.out.println(
+                                "Total objek dibuat: "
+                                + AyamGeprek.totalPesananBerhasilDibuat);
                     }
 
                     case 3 -> {
+                        System.out.println("1. Cari berdasarkan nama");
+                        System.out.println("2. Cari berdasarkan harga");
+                        System.out.print("Pilih: ");
 
-                        System.out.println(
-                                "\n-- Fitur Cari Pesanan --"
-                        );
-
-                        System.out.println(
-                                "1. Cari berdasarkan Nama (String)"
-                        );
-
-                        System.out.println(
-                                "2. Cari berdasarkan Harga (Double)"
-                        );
-
-                        System.out.print("Pilih (1/2): ");
-
-                        int modeCari = scanner.nextInt();
+                        int mode = scanner.nextInt();
                         scanner.nextLine();
 
-                        switch (modeCari) {
+                        if (mode == 1) {
+                            System.out.print("Nama: ");
+                            String nama = scanner.nextLine();
 
-                            case 1 -> {
+                            cariPesanan(
+                                    nama, daftarPesanan, jumlahPesanan);
 
-                                System.out.print(
-                                        "Masukkan Nama Pesanan: "
-                                );
+                        } else if (mode == 2) {
+                            System.out.print("Harga: ");
+                            double harga = scanner.nextDouble();
+                            scanner.nextLine();
 
-                                String kataKunci =
-                                        scanner.nextLine();
+                            cariPesanan(
+                                    harga, daftarPesanan, jumlahPesanan);
 
-                                // Memanggil overloaded method String
-                                cariPesanan(
-                                        kataKunci,
-                                        daftarPesanan,
-                                        jumlahPesanan
-                                );
-                            }
-
-                            case 2 -> {
-
-                                System.out.print(
-                                        "Masukkan Harga: "
-                                );
-
-                                double angkaKunci =
-                                        scanner.nextDouble();
-
-                                scanner.nextLine();
-
-                                // Memanggil overloaded method double
-                                cariPesanan(
-                                        angkaKunci,
-                                        daftarPesanan,
-                                        jumlahPesanan
-                                );
-                            }
-
-                            default -> {
-
-                                System.out.println(
-                                        "Pilihan tidak valid."
-                                );
-                            }
+                        } else {
+                            System.out.println("Pilihan tidak valid.");
                         }
-
-                        System.out.print(
-                                "Tekan Enter untuk melanjutkan..."
-                        );
-                        scanner.nextLine();
                     }
 
                     case 4 -> {
+                        System.out.println("\n--- Pilih Pesanan ---");
 
-                        System.out.println(
-                                "\n-- Simulasi Proses Pesanan --"
-                        );
-
-                        if (jumlahPesanan == 0) {
-
-                            System.out.println(
-                                    "Belum ada pesanan."
-                            );
-
-                        } else {
-
-                            for (int i = 0; i < jumlahPesanan; i++) {
-
-                                System.out.print(
-                                        (i + 1) + ". "
-                                );
-
-                                daftarPesanan[i].tampilkanInfo();
-                            }
-
-                            System.out.print(
-                                    "Pilih nomor pesanan: "
-                            );
-
-                            int nomor =
-                                    scanner.nextInt();
-
-                            scanner.nextLine();
-
-                            if (nomor >= 1
-                                    && nomor <= jumlahPesanan) {
-
-                                // Parameter Superclass
-                                prosesPesanan(
-                                        daftarPesanan[nomor - 1]
-                                );
-
-                            } else {
-
-                                System.out.println(
-                                        "Nomor pesanan tidak valid."
-                                );
-                            }
+                        for (int i = 0; i < jumlahPesanan; i++) {
+                            System.out.print((i + 1) + ". ");
+                            daftarPesanan[i].tampilkanInfo();
                         }
 
-                        System.out.print(
-                                "\nTekan Enter untuk melanjutkan..."
-                        );
+                        System.out.print("Nomor pesanan: ");
+                        int nomor = scanner.nextInt();
                         scanner.nextLine();
+
+                        if (nomor >= 1 && nomor <= jumlahPesanan) {
+
+                            // Objek subclass dikirim sebagai superclass
+                            prosesPesanan(daftarPesanan[nomor - 1]);
+
+                        } else {
+                            System.out.println(
+                                    "Nomor pesanan tidak valid.");
+                        }
                     }
 
                     case 5 -> {
-
                         System.out.println(
-                                "Terima kasih telah menggunakan "
-                                + "Sistem Ayam Geprek!"
-                        );
-
+                                "Terima kasih. Program selesai.");
                         isRunning = false;
                     }
 
-                    default -> {
+                    default -> System.out.println(
+                            "Pilihan tidak valid. Masukkan angka 1-5.");
+                }
 
-                        System.out.println(
-                                "Pilihan tidak valid. "
-                                + "Silahkan masukkan angka 1-5."
-                        );
-
-                        scanner.nextLine();
-                    }
+                if (isRunning) {
+                    System.out.print(
+                            "\nTekan Enter untuk melanjutkan...");
+                    scanner.nextLine();
                 }
             }
         }
