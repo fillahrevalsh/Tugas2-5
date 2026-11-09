@@ -1,4 +1,3 @@
-
 package com.mycompany.sistemayamgeprek;
 
 import java.util.ArrayList;
@@ -8,75 +7,115 @@ import java.util.Scanner;
 
 public class SistemAyamGeprek {
 
-    public static void cariPesanan(
-            String nama,
-            ArrayList<AyamGeprek> daftarPesanan)
-            throws PesananTidakDitemukanException {
+    // AGGREGATION: sistem mengelola objek pesanan dan pelanggan
+    private ArrayList<AyamGeprek> daftarPesanan;
+    private HashMap<String, Pelanggan> dataPelanggan;
 
-        boolean ditemukan = false;
+    // COMPOSITION: objek Dapur dibuat langsung di dalam constructor
+    private Dapur dapur;
+
+    public SistemAyamGeprek() {
+        daftarPesanan = new ArrayList<>();
+        dataPelanggan = new HashMap<>();
+
+        dapur = new Dapur("Dapur Utama Ayam Geprek", 50);
+    }
+
+    // Method untuk menambahkan pesanan
+    public void tambahPesanan(AyamGeprek pesanan) {
+        daftarPesanan.add(pesanan);
+        System.out.println("Pesanan berhasil ditambahkan!");
+    }
+
+    // Method untuk menampilkan semua pesanan
+    public void tampilkanDaftarPesanan() {
+        if (daftarPesanan.isEmpty()) {
+            System.out.println("Belum ada pesanan.");
+            return;
+        }
+
+        System.out.println("\n=== DAFTAR PESANAN ===");
 
         for (int i = 0; i < daftarPesanan.size(); i++) {
-            if (daftarPesanan.get(i).getNama()
-                    .equalsIgnoreCase(nama)) {
+            System.out.println("\nNomor Pesanan: " + (i + 1));
+            daftarPesanan.get(i).tampilkanInfo();
+        }
 
-                daftarPesanan.get(i).tampilkanInfo();
-                ditemukan = true;
+        System.out.println("\nJumlah Pesanan: " + daftarPesanan.size());
+    }
+
+    // Pencarian berdasarkan nama
+    public AyamGeprek cariPesanan(String nama)
+            throws PesananTidakDitemukanException {
+
+        for (int i = 0; i < daftarPesanan.size(); i++) {
+            if (daftarPesanan.get(i).getNama().equalsIgnoreCase(nama)) {
+                return daftarPesanan.get(i);
             }
         }
 
-        if (!ditemukan) {
-            throw new PesananTidakDitemukanException(
-                    "Pesanan dengan nama " + nama + " tidak ditemukan!"
-            );
-        }
+        throw new PesananTidakDitemukanException(
+                "Pesanan dengan nama " + nama + " tidak ditemukan!"
+        );
     }
 
-    // Mencari pesanan berdasarkan harga (Overloading)
-    public static void cariPesanan(
-            double harga,
-            ArrayList<AyamGeprek> daftarPesanan)
+    // Method overloading: pencarian berdasarkan harga
+    public AyamGeprek cariPesanan(double harga)
             throws PesananTidakDitemukanException {
-
-        boolean ditemukan = false;
 
         for (int i = 0; i < daftarPesanan.size(); i++) {
             if (daftarPesanan.get(i).getHarga() == harga) {
-
-                daftarPesanan.get(i).tampilkanInfo();
-                ditemukan = true;
+                return daftarPesanan.get(i);
             }
         }
 
-        if (!ditemukan) {
-            throw new PesananTidakDitemukanException(
-                    "Pesanan dengan harga Rp" + harga
-                    + " tidak ditemukan!"
-            );
+        throw new PesananTidakDitemukanException(
+                "Pesanan dengan harga tersebut tidak ditemukan!"
+        );
+    }
+
+    // Method untuk menambahkan pelanggan
+    public void tambahPelanggan(Pelanggan pelanggan) {
+        if (dataPelanggan.containsKey(pelanggan.getId())) {
+            System.out.println("ID pelanggan sudah digunakan!");
+        } else {
+            dataPelanggan.put(pelanggan.getId(), pelanggan);
+            System.out.println("Pelanggan berhasil ditambahkan!");
         }
     }
 
-    // Validasi input pesanan menggunakan throw dan throws
-    public static void validasiPesanan(
-            String nama, double harga) {
-
-        if (nama == null || nama.trim().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Nama pesanan tidak boleh kosong!"
-            );
+    // Method untuk mencari pelanggan
+    public Pelanggan cariPelanggan(String id) {
+        if (dataPelanggan.containsKey(id)) {
+            return dataPelanggan.get(id);
         }
 
-        if (harga <= 0) {
-            throw new IllegalArgumentException(
-                    "Harga harus lebih dari nol!"
-            );
+        return null;
+    }
+
+    // Method untuk menampilkan seluruh pelanggan
+    public void tampilkanDaftarPelanggan() {
+        if (dataPelanggan.isEmpty()) {
+            System.out.println("Belum ada data pelanggan.");
+            return;
+        }
+
+        System.out.println("\n=== DAFTAR PELANGGAN ===");
+
+        for (String id : dataPelanggan.keySet()) {
+            dataPelanggan.get(id).tampilkanInfo();
+            System.out.println("--------------------");
         }
     }
 
-    // Proses pesanan menggunakan superclass
-    public static void prosesPesanan(AyamGeprek pesanan) {
+    // Menampilkan informasi komponen Composition
+    public void tampilkanInfoDapur() {
+        System.out.println("\n=== INFORMASI COMPOSITION ===");
+        dapur.tampilkanInfo();
+    }
 
-        System.out.println("\n--- Proses Pesanan ---");
-
+    // Memproses pesanan dan interface dari Modul 7
+    public void prosesPesanan(AyamGeprek pesanan) {
         pesanan.deskripsiKhusus();
 
         if (pesanan instanceof BisaDipesan) {
@@ -85,369 +124,250 @@ public class SistemAyamGeprek {
         }
 
         if (pesanan instanceof BisaDiberiTopping) {
-            BisaDiberiTopping dataTopping =
-                    (BisaDiberiTopping) pesanan;
-
+            BisaDiberiTopping dataTopping = (BisaDiberiTopping) pesanan;
             dataTopping.tambahTopping();
-        }
-
-        System.out.println("Proses pesanan selesai.");
-    }
-
-    public static void menuPelanggan(
-            Scanner scanner,
-            HashMap<String, String> dataPelanggan) {
-
-        System.out.println("\n--- Menu Data Pelanggan ---");
-        System.out.println("1. Tambah Pelanggan");
-        System.out.println("2. Cari Pelanggan");
-        System.out.println("3. Tampilkan Semua Pelanggan");
-        System.out.print("Pilih: ");
-
-        int pilihan = scanner.nextInt();
-        scanner.nextLine();
-
-        if (pilihan == 1) {
-
-            System.out.print("Masukkan ID Pelanggan: ");
-            String id = scanner.nextLine();
-
-            System.out.print("Masukkan Nama Pelanggan: ");
-            String nama = scanner.nextLine();
-
-            if (id.trim().isEmpty() || nama.trim().isEmpty()) {
-                throw new IllegalArgumentException(
-                        "ID dan nama pelanggan tidak boleh kosong!"
-                );
-            }
-
-            dataPelanggan.put(id, nama);
-
-            System.out.println("Pelanggan berhasil ditambahkan.");
-
-        } else if (pilihan == 2) {
-
-            System.out.print("Masukkan ID Pelanggan: ");
-            String id = scanner.nextLine();
-
-            if (dataPelanggan.containsKey(id)) {
-                System.out.println(
-                        "Nama Pelanggan: " + dataPelanggan.get(id)
-                );
-            } else {
-                System.out.println("Pelanggan tidak ditemukan.");
-            }
-
-        } else if (pilihan == 3) {
-
-            if (dataPelanggan.isEmpty()) {
-                System.out.println("Belum ada data pelanggan.");
-            } else {
-                System.out.println(
-                        "Jumlah Pelanggan: " + dataPelanggan.size()
-                );
-
-                for (String id : dataPelanggan.keySet()) {
-                    System.out.println(
-                            "ID: " + id
-                            + " | Nama: " + dataPelanggan.get(id)
-                    );
-                }
-            }
-
-        } else {
-            System.out.println("Pilihan tidak valid.");
         }
     }
 
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
+        Scanner input = new Scanner(System.in);
 
-        ArrayList<AyamGeprek> daftarPesanan =
-                new ArrayList<>();
+        SistemAyamGeprek sistem = new SistemAyamGeprek();
 
-        HashMap<String, String> dataPelanggan =
-                new HashMap<>();
+        // Objek pesanan dibuat di luar class pengelola,
+        // kemudian dimasukkan melalui method tambahPesanan().
+        sistem.tambahPesanan(new GeprekBiasa("Geprek Original", 15000, 2));
+        sistem.tambahPesanan(new PaketGeprek("Paket Hemat", 20000,
+                "Ayam, Nasi, dan Es Teh"));
+        sistem.tambahPesanan(new GeprekKeju("Geprek Mozarella", 22000,
+                "Mozarella"));
+        sistem.tambahPesanan(new GeprekBiasa("Geprek Pedas", 17000, 5));
+        sistem.tambahPesanan(new GeprekKeju("Geprek Cheddar", 21000,
+                "Cheddar"));
 
-        daftarPesanan.add(
-                new GeprekBiasa("Geprek Original", 15000, 2)
-        );
+        // Objek pelanggan dibuat di luar class pengelola,
+        // kemudian dimasukkan melalui method tambahPelanggan().
+        Pelanggan p1 = new Pelanggan("P001", "Budi");
+        Pelanggan p2 = new Pelanggan("P002", "Siti");
+        Pelanggan p3 = new Pelanggan("P003", "Andi");
 
-        daftarPesanan.add(
-                new PaketGeprek(
-                        "Paket Hemat", 20000,
-                        "Ayam + Nasi + Es Teh")
-        );
+        sistem.tambahPelanggan(p1);
+        sistem.tambahPelanggan(p2);
+        sistem.tambahPelanggan(p3);
 
-        daftarPesanan.add(
-                new GeprekKeju(
-                        "Geprek Mozarella", 22000, "Mozarella")
-        );
+        // Objek transaksi untuk menerapkan Association
+        TransaksiPenjualan transaksi = new TransaksiPenjualan();
 
-        daftarPesanan.add(
-                new GeprekBiasa("Geprek Pedas", 17000, 5)
-        );
+        boolean berjalan = true;
 
-        daftarPesanan.add(
-                new GeprekKeju(
-                        "Geprek Cheddar", 21000, "Cheddar")
-        );
-
-        dataPelanggan.put("P001", "Budi");
-        dataPelanggan.put("P002", "Siti");
-        dataPelanggan.put("P003", "Andi");
-
-        boolean isRunning = true;
-
-        System.out.println("========================================");
-        System.out.println("       SISTEM PENJUALAN AYAM GEPREK");
-        System.out.println("========================================");
-
-        while (isRunning) {
-
+        while (berjalan) {
             try {
-
-                System.out.println("\nMenu Utama:");
+                System.out.println("\n===== SISTEM PENJUALAN AYAM GEPREK =====");
                 System.out.println("1. Tambah Pesanan");
-                System.out.println("2. Lihat Daftar Pesanan");
+                System.out.println("2. Tampilkan Daftar Pesanan");
                 System.out.println("3. Cari Pesanan");
-                System.out.println("4. Simulasi Proses Pesanan");
-                System.out.println("5. Kelola Data Pelanggan");
-                System.out.println("6. Keluar");
-                System.out.print("Pilih Menu: ");
+                System.out.println("4. Kelola Data Pelanggan");
+                System.out.println("5. Informasi Dapur");
+                System.out.println("6. Proses Transaksi");
+                System.out.println("7. Keluar");
+                System.out.print("Pilih menu: ");
 
-                int pilihan = scanner.nextInt();
-                scanner.nextLine();
+                int pilihan = input.nextInt();
+                input.nextLine();
 
                 switch (pilihan) {
+                    case 1:
+                        System.out.print("Masukkan nama pesanan: ");
+                        String nama = input.nextLine();
 
-                    case 1 -> {
+                        System.out.print("Masukkan harga: ");
+                        double harga = input.nextDouble();
+                        input.nextLine();
 
-                        System.out.println("\nJenis Pesanan:");
+                        if (nama.isEmpty() || harga <= 0) {
+                            throw new IllegalArgumentException(
+                                    "Nama atau harga pesanan tidak valid!"
+                            );
+                        }
+
+                        System.out.println("Pilih jenis pesanan:");
                         System.out.println("1. Geprek Biasa");
                         System.out.println("2. Paket Geprek");
                         System.out.println("3. Geprek Keju");
-                        System.out.print("Pilih jenis: ");
+                        System.out.print("Pilihan: ");
 
-                        int jenis = scanner.nextInt();
-                        scanner.nextLine();
-
-                        System.out.print("Nama Pesanan: ");
-                        String nama = scanner.nextLine();
-
-                        System.out.print("Harga: ");
-                        double harga = scanner.nextDouble();
-                        scanner.nextLine();
-
-                        validasiPesanan(nama, harga);
+                        int jenis = input.nextInt();
+                        input.nextLine();
 
                         if (jenis == 1) {
+                            System.out.print("Level pedas (1-5): ");
+                            int level = input.nextInt();
+                            input.nextLine();
 
-                            System.out.print("Level Pedas (1-5): ");
-                            int level = scanner.nextInt();
-                            scanner.nextLine();
-
-                            if (level < 1 || level > 5) {
-                                throw new IllegalArgumentException(
-                                        "Level pedas harus 1 sampai 5!"
-                                );
-                            }
-
-                            daftarPesanan.add(
+                            sistem.tambahPesanan(
                                     new GeprekBiasa(nama, harga, level)
                             );
-
                         } else if (jenis == 2) {
+                            System.out.print("Isi paket: ");
+                            String isi = input.nextLine();
 
-                            System.out.print("Isi Paket: ");
-                            String isi = scanner.nextLine();
-
-                            if (isi.trim().isEmpty()) {
-                                throw new IllegalArgumentException(
-                                        "Isi paket tidak boleh kosong!"
-                                );
-                            }
-
-                            daftarPesanan.add(
+                            sistem.tambahPesanan(
                                     new PaketGeprek(nama, harga, isi)
                             );
-
                         } else if (jenis == 3) {
+                            System.out.print("Jenis keju: ");
+                            String keju = input.nextLine();
 
-                            System.out.print("Jenis Keju: ");
-                            String keju = scanner.nextLine();
-
-                            if (keju.trim().isEmpty()) {
-                                throw new IllegalArgumentException(
-                                        "Jenis keju tidak boleh kosong!"
-                                );
-                            }
-
-                            daftarPesanan.add(
+                            sistem.tambahPesanan(
                                     new GeprekKeju(nama, harga, keju)
                             );
-
                         } else {
-                            System.out.println(
-                                    "Jenis pesanan tidak valid."
-                            );
+                            System.out.println("Jenis pesanan tidak tersedia.");
                         }
+                        break;
 
-                        System.out.println(
-                                "Jumlah pesanan sekarang: "
-                                + daftarPesanan.size()
-                        );
-                    }
+                    case 2:
+                        sistem.tampilkanDaftarPesanan();
+                        break;
 
-                    case 2 -> {
+                    case 3:
+                        System.out.println("1. Cari berdasarkan nama");
+                        System.out.println("2. Cari berdasarkan harga");
+                        System.out.print("Pilih pencarian: ");
 
-                        System.out.println("\n--- Daftar Pesanan ---");
+                        int cari = input.nextInt();
+                        input.nextLine();
 
-                        if (daftarPesanan.isEmpty()) {
-                            System.out.println(
-                                    "Belum ada pesanan."
-                            );
+                        if (cari == 1) {
+                            System.out.print("Masukkan nama pesanan: ");
+                            String kataKunci = input.nextLine();
+
+                            AyamGeprek hasil = sistem.cariPesanan(kataKunci);
+                            hasil.tampilkanInfo();
+
+                        } else if (cari == 2) {
+                            System.out.print("Masukkan harga: ");
+                            double hargaCari = input.nextDouble();
+                            input.nextLine();
+
+                            AyamGeprek hasil = sistem.cariPesanan(hargaCari);
+                            hasil.tampilkanInfo();
                         } else {
-
-                            for (int i = 0;
-                                    i < daftarPesanan.size(); i++) {
-
-                                System.out.print((i + 1) + ". ");
-
-                                daftarPesanan.get(i).tampilkanInfo();
-                                daftarPesanan.get(i).deskripsiKhusus();
-                                System.out.println();
-                            }
-
-                            System.out.println(
-                                    "Total Pesanan: "
-                                    + daftarPesanan.size()
-                            );
+                            System.out.println("Pilihan pencarian tidak valid.");
                         }
-                    }
+                        break;
 
-                    case 3 -> {
+                    case 4:
+                        System.out.println("\n=== KELOLA PELANGGAN ===");
+                        System.out.println("1. Tambah Pelanggan");
+                        System.out.println("2. Cari Pelanggan");
+                        System.out.println("3. Tampilkan Semua Pelanggan");
+                        System.out.print("Pilih menu: ");
 
-                        System.out.println("\nCari Pesanan:");
-                        System.out.println("1. Berdasarkan Nama");
-                        System.out.println("2. Berdasarkan Harga");
-                        System.out.print("Pilih: ");
+                        int menuPelanggan = input.nextInt();
+                        input.nextLine();
 
-                        int mode = scanner.nextInt();
-                        scanner.nextLine();
+                        if (menuPelanggan == 1) {
+                            System.out.print("Masukkan ID pelanggan: ");
+                            String id = input.nextLine();
 
-                        if (mode == 1) {
+                            System.out.print("Masukkan nama pelanggan: ");
+                            String namaPelanggan = input.nextLine();
 
-                            System.out.print("Nama Pesanan: ");
-                            String nama = scanner.nextLine();
-
-                            cariPesanan(nama, daftarPesanan);
-
-                        } else if (mode == 2) {
-
-                            System.out.print("Harga: ");
-                            double harga = scanner.nextDouble();
-                            scanner.nextLine();
-
-                            cariPesanan(harga, daftarPesanan);
-
-                        } else {
-                            System.out.println(
-                                    "Pilihan tidak valid."
-                            );
-                        }
-                    }
-
-                    case 4 -> {
-
-                        if (daftarPesanan.isEmpty()) {
-                            System.out.println(
-                                    "Belum ada pesanan."
-                            );
-                        } else {
-
-                            for (int i = 0;
-                                    i < daftarPesanan.size(); i++) {
-
-                                System.out.print((i + 1) + ". ");
-                                daftarPesanan.get(i).tampilkanInfo();
-                            }
-
-                            System.out.print("Pilih nomor pesanan: ");
-                            int nomor = scanner.nextInt();
-                            scanner.nextLine();
-
-                            if (nomor >= 1
-                                    && nomor <= daftarPesanan.size()) {
-
-                                prosesPesanan(
-                                        daftarPesanan.get(nomor - 1)
+                            if (id.isEmpty() || namaPelanggan.isEmpty()) {
+                                throw new IllegalArgumentException(
+                                        "ID dan nama pelanggan tidak boleh kosong!"
                                 );
+                            }
 
+                            Pelanggan pelangganBaru =
+                                    new Pelanggan(id, namaPelanggan);
+
+                            sistem.tambahPelanggan(pelangganBaru);
+
+                        } else if (menuPelanggan == 2) {
+                            System.out.print("Masukkan ID pelanggan: ");
+                            String id = input.nextLine();
+
+                            Pelanggan hasil = sistem.cariPelanggan(id);
+
+                            if (hasil != null) {
+                                hasil.tampilkanInfo();
                             } else {
-                                System.out.println(
-                                        "Nomor pesanan tidak valid."
-                                );
+                                System.out.println("Pelanggan tidak ditemukan!");
                             }
+
+                        } else if (menuPelanggan == 3) {
+                            sistem.tampilkanDaftarPelanggan();
+
+                        } else {
+                            System.out.println("Pilihan tidak valid.");
                         }
-                    }
+                        break;
 
-                    case 5 -> {
-                        menuPelanggan(scanner, dataPelanggan);
-                    }
+                    case 5:
+                        sistem.tampilkanInfoDapur();
+                        break;
 
-                    case 6 -> {
-                        System.out.println(
-                                "Terima kasih telah menggunakan "
-                                + "Sistem Ayam Geprek."
+                    case 6:
+                        sistem.tampilkanDaftarPelanggan();
+                        System.out.print("\nMasukkan ID pelanggan: ");
+                        String idTransaksi = input.nextLine();
+
+                        Pelanggan pelangganTransaksi =
+                                sistem.cariPelanggan(idTransaksi);
+
+                        if (pelangganTransaksi == null) {
+                            System.out.println("Pelanggan tidak ditemukan!");
+                            break;
+                        }
+
+                        sistem.tampilkanDaftarPesanan();
+                        System.out.print("Pilih nomor pesanan: ");
+                        int nomor = input.nextInt();
+                        input.nextLine();
+
+                        if (nomor < 1 || nomor > sistem.daftarPesanan.size()) {
+                            System.out.println("Nomor pesanan tidak valid!");
+                            break;
+                        }
+
+                        AyamGeprek pesananTransaksi =
+                                sistem.daftarPesanan.get(nomor - 1);
+
+                        sistem.prosesPesanan(pesananTransaksi);
+
+                        transaksi.prosesTransaksi(
+                                pelangganTransaksi,
+                                pesananTransaksi
                         );
+                        break;
 
-                        isRunning = false;
-                    }
+                    case 7:
+                        berjalan = false;
+                        System.out.println("Terima kasih telah menggunakan program!");
+                        break;
 
-                    default -> {
-                        System.out.println(
-                                "Pilihan tidak valid. Masukkan 1-6."
-                        );
-                    }
+                    default:
+                        System.out.println("Pilihan menu tidak tersedia.");
                 }
 
             } catch (InputMismatchException e) {
-
-                System.out.println(
-                        "Error: Input harus sesuai dengan tipe data!"
-                );
-
-                scanner.nextLine();
+                System.out.println("Kesalahan: Input harus berupa angka!");
+                input.nextLine();
 
             } catch (PesananTidakDitemukanException e) {
-
-                System.out.println(
-                        "Error: " + e.getMessage()
-                );
+                System.out.println("Kesalahan: " + e.getMessage());
 
             } catch (IllegalArgumentException e) {
-
-                System.out.println(
-                        "Error: " + e.getMessage()
-                );
+                System.out.println("Kesalahan: " + e.getMessage());
 
             } finally {
-
-                System.out.println(
-                        "Blok finally: Proses menu telah selesai."
-                );
-            }
-
-            if (isRunning) {
-                System.out.print(
-                        "Tekan Enter untuk melanjutkan..."
-                );
-                scanner.nextLine();
+                System.out.println("Blok finally: Proses menu telah selesai.");
             }
         }
 
-        scanner.close();
+        input.close();
     }
 }
