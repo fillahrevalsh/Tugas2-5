@@ -1,58 +1,49 @@
-
 package com.mycompany.sistemayamgeprek;
 
-public abstract class AyamGeprek {
+import java.io.Serializable;
+
+public abstract class AyamGeprek implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String nama;
     private double harga;
-
-    public static int totalPesananBerhasilDibuat = 0;
+    private static int jumlahPesanan = 0;
 
     public AyamGeprek(String nama, double harga) {
-        setNama(nama);
-        setHarga(harga);
-
-        totalPesananBerhasilDibuat++;
+        this.nama = nama;
+        this.harga = harga;
+        jumlahPesanan++;
     }
 
     public String getNama() {
-        return this.nama;
-    }
-
-    public void setNama(String nama) {
-        if (nama != null && !nama.isEmpty()) {
-            this.nama = nama;
-        } else {
-            System.out.println("Nama tidak boleh kosong!");
-        }
+        return nama;
     }
 
     public double getHarga() {
-        return this.harga;
+        return harga;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
     }
 
     public void setHarga(double harga) {
-        if (harga > 0) {
-            this.harga = harga;
-        } else {
-            System.out.println("Harga tidak valid!");
-        }
+        this.harga = harga;
+    }
+
+    public static int getJumlahPesanan() {
+        return jumlahPesanan;
     }
 
     public void tampilkanInfo() {
-        System.out.printf(
-                "Nama: %-20s | Harga: Rp%.0f%n",
-                this.nama,
-                this.harga
-        );
+        System.out.println("Nama Pesanan: " + nama);
+        System.out.println("Harga: Rp" + String.format("%.0f", harga));
     }
 
     public void caraPesan() {
-        System.out.println(
-                "Pesanan dapat dipesan langsung di kasir."
-        );
+        System.out.println("Pesanan diproses oleh sistem.");
     }
 
-    // Abstract method
     public abstract void deskripsiKhusus();
 }

@@ -1,60 +1,22 @@
-
 package com.mycompany.sistemayamgeprek;
 
-public class GeprekBiasa extends AyamGeprek
-        implements BisaDipesan {
+public class GeprekBiasa extends AyamGeprek implements BisaDipesan {
 
-    private int levelPedas;
+    private String levelPedas;
 
-    public GeprekBiasa(
-            String nama, double harga, int levelPedas) {
-
+    public GeprekBiasa(String nama, double harga, String levelPedas) {
         super(nama, harga);
-        setLevelPedas(levelPedas);
-    }
-
-    public int getLevelPedas() {
-        return this.levelPedas;
-    }
-
-    public void setLevelPedas(int levelPedas) {
-        if (levelPedas >= 1 && levelPedas <= 5) {
-            this.levelPedas = levelPedas;
-        } else {
-            System.out.println(
-                    "Level pedas harus antara 1 sampai 5!"
-            );
-        }
-    }
-
-    @Override
-    public void tampilkanInfo() {
-        System.out.printf(
-                "[Geprek Biasa] Nama: %-15s | Harga: Rp%.0f | Level: %d%n",
-                this.getNama(),
-                this.getHarga(),
-                this.levelPedas
-        );
-    }
-
-    @Override
-    public void caraPesan() {
-        System.out.println(
-                "Geprek biasa dipesan dengan memilih level pedas 1-5."
-        );
+        this.levelPedas = levelPedas;
     }
 
     @Override
     public void deskripsiKhusus() {
-        System.out.println(
-                "Jenis: ayam geprek biasa dengan pilihan level pedas."
-        );
+        System.out.println("Jenis: Ayam Geprek Biasa");
+        System.out.println("Level Pedas: " + levelPedas);
     }
 
     @Override
     public void prosesPemesanan() {
-        System.out.println(
-                "Geprek biasa sedang disiapkan sesuai level pedas."
-        );
+        System.out.println("Pesanan ayam geprek biasa sedang diproses.");
     }
 }
